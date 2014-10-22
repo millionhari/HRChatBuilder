@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Chatbuilder</title>
+    <script src="http://chatbuilder.hackreactor.com/ChatBuilder.js"></script>
+    <link rel="stylesheet" type="text/css"href="style.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,300,600' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+
+    <script>
+    delete Chat.display;
+    delete Chat.fetch;
+    delete Chat.send;
+      /*
+       *  Nice, you found the HTML source code for ChatBuilder! This document kicks everything off when you load it
+       *  in your browser, and is a starting point for the whole app. It's pretty incomplete though--you should
+       *  make your own version of it that works better!
+       *
+       *  You can't edit the code here until it's in a file on your hard drive, so copy this whole page of source
+       *  code and paste it into a plain text editor like Sublime Text 2 (http://www.sublimetext.com/). Save it as
+       *  a `.html` file, and open that file with Google Chrome. You can now edit it however you like, and refresh
+       *  the page to see your modifications take effect on how the application runs.
+       *
+       *  Fair warning: one or more of the steps ahead could require a good amount of research to understand all
+       *  the terms and technologies mentioned. Googling words you haven't heard before is a great idea. Just be
+       *  careful not to spend too long in 'research mode' without making any forward progress on your real goal of
+       *  completing the app!
+       *
+       *  When you've got this code saved as a local file, uncomment the line of JavaScript code below and open
+       *  the new file in Google Chrome. Your next instructions will be waiting for you in the JavaScript console.
+       *  If you already know the Chrome JS development tools pretty well, feel free to skip this opening tutorial
+       *  by calling the `.start()` function on `Chat.guide` instead of `.intro()`
+       *
+       *  NOTE: Please do not publish or share any of the code associated with this challenge. We've worked really
+       *  hard to build this material and publishing solutions diminishes its effectiveness.
+       */
+
+
+        function show (message){
+          $('.messages').prepend("<li>" + message + "</li>");
+        }
+
+
+        function retrieve(){
+          $.getJSON('https://api.parse.com/1/classes/chats?order=-createdAt', function (data) {
+            $('.messages').empty();
+              $.each(data, function(key, obj){
+                $.each(obj, function(key, val){
+                  show(val['text']);
+                })
+              });
+          })
+        }
+
+       //Get Name
+          var username = ((window.location.href).split("username="))[1];
+          var message = {};
+
+      //When send is clicked, take everything inside text box, turn it into an object with a key of "text", and run the send function with the message
+      $(document).ready(function(){
+        $('.send').on('click', function(){
+          message = {
+            text : username + ": " + $('.draft').val()
+          }
+          $('.draft').val("");
+          send(message);
+        })
+      })
+
+      //Send to server
+      function send(message){
+          $.ajax({
+          type: "POST",
+          url: "https://api.parse.com/1/classes/chats",
+          data: JSON.stringify(message),
+          contentType: "application/json",
+          dataType: "json"
+  })
+}
+        
+
+        
+      retrieve();
+      setInterval(retrieve, 3000);
+
+      Chat.guide.start();
+
+      // Your JavaScript code will go right here!
+    </script>
+
+    <h2>Working Chat</h2>
+
+    <ul class="messages">
+
+    </ul>
+
+    <input class="draft" type="text"/> <button class="send">Send</button>
+
+    
+
+  </body>
+</html>
